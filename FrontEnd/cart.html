@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ShopFusion – Cart</title>
+  <link rel="stylesheet" href="style.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+  />
+  <link rel="shortcut icon" href="/FrontEnd/images/logo/favicon.ico" type="image/x-icon">
+  <style>
+      .remove-btn {
+        background: #e74c3c;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 6px 14px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .remove-btn:hover {
+        background: #c0392b;
+      }
+    </style>
+</head>
+<body>
+  <!-- your header/nav here... -->
+
+  <!-- Cart Table -->
+  <section id="cart" class="section-p1">
+    <table width="100%">
+      <thead>
+        <tr>
+          <td>Remove</td>
+          <td>Image</td>
+          <td>Product</td>
+          <td>Size</td>
+          <td>Price</td>
+          <td>Quantity</td>
+          <td>Subtotal</td>
+        </tr>
+      </thead>
+      <tbody id="cart-items"></tbody>
+    </table>
+  </section>
+
+  <!-- Cart Totals & Controls -->
+  <section id="cart-add" class="section-p1">
+    <div id="coupon">
+      <h3>Apply coupon</h3>
+      <input type="text" id="coupon-code" placeholder="Enter coupon code" />
+      <button class="normal" onclick="applyCoupon()">Apply</button>
+      <div id="coupon-info" style="margin-top:8px;color:#007bff;font-size:15px;">
+        Enjoy 10% off on minimum order of Rs.1000 with code <b>DISCOUNT10</b>!
+      </div>
+    </div>
+    <div id="subtotal">
+      <h3>Cart Totals</h3>
+      <table>
+        <tr><td>Cart Subtotal</td><td id="cart-subtotal">Rs.0</td></tr>
+        <tr><td>Shipping</td><td>Free</td></tr>
+        <tr><td><strong>Total</strong></td><td><strong id="cart-total">Rs.0</strong></td></tr>
+      </table>
+      <button id="checkoutBtn" class="normal" onclick="proceedToCheckout()">Proceed to Checkout</button>
+      <button class="normal" onclick="clearCart()">Clear Cart</button>
+    </div>
+  </section>
+
+  <!-- Shipping Form (revealed after checkout) -->
+  <section id="checkout-form" class="section-p1" style="display:none;">
+    <h3>Shipping Details</h3>
+    <form id="shippingForm">
+      <input type="text" id="fullName" placeholder="Full Name" required /><br/>
+      <input type="text" id="contactNumber" placeholder="Contact Number" required /><br/>
+      <input type="email" id="email" placeholder="Email Address" required /><br/>
+      <textarea id="address" placeholder="Address" required></textarea><br/>
+      <select id="state" required>
+        <option value="">Select State</option>
+        <option>Andhra Pradesh</option>
+        <option>Arunachal Pradesh</option>
+        <option>Assam</option>
+        <option>Bihar</option>
+        <option>Chhattisgarh</option>
+        <option>Goa</option>
+        <option>Gujarat</option>
+        <option>Haryana</option>
+        <option>Himachal Pradesh</option>
+        <option>Jharkhand</option>
+        <option>Karnataka</option>
+        <option>Kerala</option>
+        <option>Madhya Pradesh</option>
+        <option>Maharashtra</option>
+        <option>Manipur</option>
+        <option>Meghalaya</option>
+        <option>Mizoram</option>  
+        <option>Nagaland</option>
+        <option>Odisha</option>
+        <option>Punjab</option>
+        <option>Rajasthan</option>
+        <option>Sikkim</option>
+        <option>Tamil Nadu</option>
+        <option>Telangana</option>
+        <option>Tripura</option>
+        <option>Uttar Pradesh</option>
+        <option>Uttarakhand</option>
+        <option>West Bengal</option>
+        <option>Andaman and Nicobar Islands</option>
+        <option>Chandigarh</option>
+        <option>Dadra and Nagar Haveli and Daman and Diu</option>
+        <option>Delhi</option>
+        <option>Jammu and Kashmir</option>
+        <option>Ladakh</option>
+      </select><br/>
+      <button type="submit" class="normal"><a style="text-decoration: none;color: #fff;" href="/payment.html">Proceed to Payment</a></button>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer class="section-p1">
+    <div class="col">
+      <img class="logo" src="images/logo/logo.svg " alt="">
+      <h4>Contact</h4>
+      <p><strong>Phone:</strong>7264858117</p>
+      <p><strong>e-mail:</strong>ShopFusion123@gmail.com</p>
+      <div class="follow">
+        <h4>Follow Us</h4>
+        <div class="icons">
+          <i class="fa-brands fa-facebook"></i>
+          <i class="fa-brands fa-instagram"></i>
+          <i class="fa-brands fa-twitter"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <h4>About</h4>
+      <a href="about.html">About Us</a>
+      <a href="dashboard.html">Delivery Information</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms & conditions</a>
+      <a href="contact.html">Contact Us</a>
+    </div>
+
+    <div class="col">
+      <h4>My Account</h4>
+      <a href="index.html">Sign in</a>
+      <a href="cart.html">View Cart</a>
+      <a href="contact.html">Help</a>
+    </div>
+
+    <div class="col install">
+      <p>Secured Payment Gateways</p>
+      <a href="payment.html"><img src="img/pay/pay.png" alt=""></a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    // Show shipping form when 'Proceed to Checkout' is clicked
+    
+  
+    window.addEventListener("DOMContentLoaded", displayCartItems);
+
+function displayCartItems() {
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const container = document.getElementById("cart-items");
+  let subtotal = 0;
+  container.innerHTML = "";
+
+  if (!cart.length) {
+    container.innerHTML = "<tr><td colspan='7'>Your cart is empty.</td></tr>";
+    updateTotals(0);
+    return;
+  }
+
+  cart.forEach((item, i) => {
+    const priceNum = parseFloat(item.price.toString().replace(/[^0-9]/g, ""));
+    const qtyNum   = parseInt(item.quantity, 10) || 1;
+    const lineSubtotal = priceNum * qtyNum;
+    subtotal += lineSubtotal;
+
+    // **यहाँ item.img का यूज़ करो**
+    let imgSrc = item.img;
+    if (!imgSrc.startsWith("http") && !imgSrc.startsWith("img/")) {
+      imgSrc = "img/" + imgSrc;
+    }
+
+    container.innerHTML += `
+      <tr>
+        <td><button class="remove-btn" onclick="removeFromCart(${i})">Remove</button></td>
+        <td><img src="${imgSrc}" width="50" alt="${item.name}"></td>
+        <td>${item.name}</td>
+        <td>${item.size || '-'}</td>
+        <td>Rs. ${priceNum.toFixed(2)}</td>
+        <td>${qtyNum}</td>
+        <td>Rs. ${lineSubtotal.toFixed(2)}</td>
+      </tr>
+    `;
+  });
+
+  updateTotals(subtotal);
+}
+
+function removeFromCart(index) {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  cart.splice(index, 1);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  displayCartItems();
+}
+
+function clearCart() {
+  localStorage.removeItem("cart");
+  displayCartItems();
+}
+
+function applyCoupon() {
+  const code = document.getElementById("coupon-code").value.trim().toUpperCase();
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  let subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) * (parseInt(item.quantity, 10) || 1)), 0);
+  let discount = 0;
+  let message = '';
+  if (code === "DISCOUNT10") {
+    if (subtotal >= 1000) {
+      discount = subtotal * 0.10;
+      message = "10% off applied!";
+    } else {
+      alert("Order must be at least Rs.1000 to use this coupon.");
+      return;
+    }
+  } else if (code === "FREESHIP") {
+    discount = 0;
+    message = "Free shipping applied!";
+  } else if (code === "SAVE50") {
+    discount = 50;
+    message = "Flat Rs.50 off applied!";
+  } else if (!code) {
+    alert("Please enter a coupon code.");
+    return;
+  } else {
+    alert("Invalid coupon");
+    return;
+  }
+  if (discount > subtotal) discount = subtotal;
+  const total = subtotal - discount;
+  document.getElementById("cart-subtotal").textContent = `Rs. ${subtotal.toFixed(2)}`;
+  document.getElementById("cart-total").textContent = `Rs. ${total.toFixed(2)}`;
+  localStorage.setItem("cartTotal", total);
+  alert(message);
+}
+
+function updateTotals(sub) {
+  document.getElementById("cart-subtotal").textContent = `Rs. ${sub.toFixed(2)}`;
+  document.getElementById("cart-total").textContent    = `Rs. ${sub.toFixed(2)}`;
+}
+ 
+</script>
+
+  
+</body>
+</html>

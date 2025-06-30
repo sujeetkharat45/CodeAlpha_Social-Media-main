@@ -1,0 +1,148 @@
+<!-- dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>User Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .dashboard-container { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 20px #0001; padding: 30px; }
+    .profile-section { margin-bottom: 30px; }
+    .orders-table { width: 100%; border-collapse: collapse; }
+    .orders-table th, .orders-table td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; }
+    .cancel-btn { background: #e74c3c; color: #fff; border: none; padding: 7px 16px; border-radius: 6px; cursor: pointer; }
+    .cancel-btn:disabled { background: #ccc; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <h2>Welcome, <span id="userName"></span></h2>
+    <div class="profile-section">
+      <h3>Your Details</h3>
+      <p><strong>Email:</strong> <span id="userEmail"></span></p>
+    </div>
+    <div>
+      <h3>Your Orders</h3>
+      <table class="orders-table" id="ordersTable">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Product(s)</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Orders will be loaded here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="col">
+      <img class="logo" src="images/logo/logo.svg " alt="">
+      <h4>Contact</h4>
+      <p><strong>Phone:</strong>7264858117</p>
+      <p><strong>e-mail:</strong>ShopFusion123@gmail.com</p>
+      <div class="follow">
+        <h4>Follow Us</h4>
+        <div class="icons">
+          <i class="fa-brands fa-facebook"></i>
+          <i class="fa-brands fa-instagram"></i>
+          <i class="fa-brands fa-twitter"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <h4>About</h4>
+      <a href="about.html">About Us</a>
+      <a href="dashboard.html">Delivery Information</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms & conditions</a>
+      <a href="contact.html">Contact Us</a>
+    </div>
+
+    <div class="col">
+      <h4>My Account</h4>
+      <a href="index.html">Sign in</a>
+      <a href="cart.html">View Cart</a>
+      <a href="contact.html">Help</a>
+    </div>
+
+    <div class="col install">
+      <p>Secured Payment Gateways</p>
+      <a href="payment.html"><img src="img/pay/pay.png" alt=""></a>
+    </div>
+  </div>
+  <script>
+  // Load user info
+  const user = JSON.parse(localStorage.getItem('ShopFusion_user'));
+  if (!user || (!user._id && !user.email)) {
+    alert('Please log in to view your dashboard.');
+    window.location.href = '/FrontEnd/login.html';
+  } else {
+    document.getElementById('userName').textContent = user?.name || '';
+    document.getElementById('userEmail').textContent = user?.email || '';
+    document.getElementById('userPhone').textContent = user?.phone || '';
+    document.getElementById('userAddress').textContent = user?.address || '';
+
+    // Use _id if available, else fallback to email
+    const userId = user._id; // Only use _id!
+
+    if (!userId) {
+      alert('User ID not found. Please log in again.');
+      window.location.href = '/index.html';
+    } else {
+      // Fetch and display orders
+      fetch(`http://localhost:5000/api/order/user-orders?userId=${userId}`)
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.querySelector('#ordersTable tbody');
+          tbody.innerHTML = '';
+          if (!data.orders) {
+            tbody.innerHTML = '<tr><td colspan="5">No orders found or error loading orders.</td></tr>';
+            return;
+          }
+          data.orders.forEach(order => {
+            const canCancel = order.status === 'pending' || order.status === 'processing';
+            tbody.innerHTML += `
+              <tr>
+                <td>${order._id}</td>
+                <td>
+                  ${order.cartItems.map(item => `
+                    <div>
+                      <img src="${item.img}" alt="" style="width:40px;height:40px;border-radius:6px;vertical-align:middle;">
+                      ${item.name} (x${item.quantity})<br>
+                      Size: ${item.size}
+                    </div>
+                  `).join('')}
+                </td>
+                <td>Rs.${order.totalAmount}</td>
+                <td>${order.status || 'pending'}</td>
+                <td>
+                  <button class="cancel-btn" onclick="cancelOrder('${order._id}')" ${!canCancel ? 'disabled' : ''}>Cancel</button>
+                </td>
+              </tr>
+            `;
+          });
+        });
+    }
+  }
+
+  function cancelOrder(orderId) {
+    if (!confirm('Are you sure you want to cancel this order?')) return;
+    fetch('http://localhost:5000/api/order/cancel-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId })
+    })
+    .then(res => res.json())
+    .then(data => {
+      alert(data.message || 'Order cancelled');
+      location.reload();
+    });
+  }
+  </script>
+</body>
+</html>
