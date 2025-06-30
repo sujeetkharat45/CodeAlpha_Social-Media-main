@@ -88,5 +88,5 @@ This project is for educational purposes. Feel free to use and modify it.
 
 ---
 
-**Developed by Atharva Pawar**
+**Developed by Sujeet Kharat**
 
